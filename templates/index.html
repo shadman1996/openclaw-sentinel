@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Sentinel</title>
+    <meta name="description" content="Cybersecurity anomaly detection and monitoring dashboard for OpenClaw autonomous agents.">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="glass-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-icon"></div>
+                <h2>Claw<span class="accent">Sentinel</span></h2>
+            </div>
+            <ul class="nav-links">
+                <li class="active">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    Dashboard
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Z"></path><path d="M12 6V12L16 14"></path></svg>
+                    Event Logs
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"></path><path d="M13.73 21A2 2 0 0 1 10.27 21"></path></svg>
+                    Threat Alerts
+                </li>
+                <li>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
+                    Process Monitor
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <header class="top-header">
+                <h1>System Overview</h1>
+                <div class="status-indicator">
+                    <span class="pulse-dot" id="connection-status"></span>
+                    <span>Monitoring Active</span>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                
+                <!-- Health Score Card -->
+                <div class="card glass-panel health-card">
+                    <div class="card-header">
+                        <h3>System Integrity</h3>
+                        <span class="badge" id="health-badge">Optimal</span>
+                    </div>
+                    <div class="health-display">
+                        <svg class="circular-chart" viewBox="0 0 36 36">
+                            <path class="circle-bg"
+                                d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                            <path class="circle" id="health-circle"
+                                stroke-dasharray="100, 100"
+                                d="M18 2.0845
+                                a 15.9155 15.9155 0 0 1 0 31.831
+                                a 15.9155 15.9155 0 0 1 0 -31.831"
+                            />
+                            <text x="18" y="20.35" class="percentage" id="health-score">100%</text>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Metrics Cards -->
+                <div class="metrics-container">
+                    <div class="card glass-panel metric-box">
+                        <div class="metric-title">CPU Utilization</div>
+                        <div class="metric-value"><span id="cpu-val">--</span>%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar" id="cpu-bar"></div></div>
+                    </div>
+                    <div class="card glass-panel metric-box">
+                        <div class="metric-title">Memory Footprint</div>
+                        <div class="metric-value"><span id="mem-val">--</span>%</div>
+                        <div class="progress-bar-bg"><div class="progress-bar" id="mem-bar"></div></div>
+                    </div>
+                    <div class="card glass-panel active-proc-box">
+                        <div class="proc-header">
+                            <div>
+                                <div class="metric-title">Rogue Processes Identified</div>
+                                <div class="metric-value warn-text" id="anomaly-count">0</div>
+                            </div>
+                            <button id="kill-all-btn" class="action-btn">Terminate Rogue OpenClaw Tasks</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Threat Feed -->
+                <div class="card glass-panel logs-card">
+                    <div class="card-header">
+                        <h3>Live Telemetry & Threat Feed</h3>
+                        <div class="log-filters">
+                            <button class="filter-btn active" data-filter="all">All Logs</button>
+                            <button class="filter-btn" data-filter="WARN">Warnings</button>
+                            <button class="filter-btn" data-filter="CRIT">Critical</button>
+                        </div>
+                    </div>
+                    <div class="logs-container" id="logs-list">
+                        <!-- Logs will be dynamically injected here -->
+                        <div class="log-entry phantom-loader">Connecting to OpenClaw Engine...</div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Notification Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
