@@ -1,181 +1,234 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // DOM Elements
+    // --- DOM Elements ---
     const elements = {
-        healthScore: document.getElementById('health-score'),
-        healthBadge: document.getElementById('health-badge'),
-        healthCircle: document.getElementById('health-circle'),
-        cpuVal: document.getElementById('cpu-val'),
-        cpuBar: document.getElementById('cpu-bar'),
-        memVal: document.getElementById('mem-val'),
-        memBar: document.getElementById('mem-bar'),
-        anomalyCount: document.getElementById('anomaly-count'),
-        logsList: document.getElementById('logs-list'),
         toastContainer: document.getElementById('toast-container'),
         killBtn: document.getElementById('kill-all-btn'),
-        filterBtns: document.querySelectorAll('.filter-btn')
+        navItems: document.querySelectorAll('.nav-item'),
+        tabPanes: document.querySelectorAll('.tab-pane'),
+        pageTitle: document.getElementById('page-title'),
+        activeProcs: document.getElementById('active-procs'),
+        logsList: document.getElementById('logs-list'),
+        
+        // Performance Elements
+        cpuSideVal: document.getElementById('cpu-side-val'),
+        memSideVal: document.getElementById('mem-side-val'),
+        netSideVal: document.getElementById('net-side-val'),
+        cpuMainVal: document.getElementById('cpu-main-val'),
+        netMainVal: document.getElementById('net-main-val'),
+        healthScoreVal: document.getElementById('health-score-val'),
+        
+        // Scan Elements
+        scanFeedback: document.getElementById('scan-feedback'),
+        scanStatusText: document.getElementById('scan-status-text'),
+        scanProgress: document.getElementById('scan-progress'),
+        scanThreats: document.getElementById('scan-threats-found'),
+        scanBtns: document.querySelectorAll('.sys-btn.primary') // Just disabled on scan running
     };
 
-    let currentLogs = [];
-    let currentFilter = 'all';
     let lastLogId = 0;
 
-    // Filter Logic
-    elements.filterBtns.forEach(btn => {
-        btn.addEventListener('click', (e) => {
-            elements.filterBtns.forEach(b => b.classList.remove('active'));
-            e.target.classList.add('active');
-            currentFilter = e.target.getAttribute('data-filter');
-            renderLogs();
+    // --- Tab Navigation ---
+    elements.navItems.forEach(item => {
+        item.addEventListener('click', (e) => {
+            elements.navItems.forEach(nav => nav.classList.remove('active'));
+            elements.tabPanes.forEach(pane => pane.classList.remove('active-tab'));
+            
+            // Allow clicking SVG path safely
+            const targetEl = e.target.closest('.nav-item');
+            targetEl.classList.add('active');
+            
+            const targetTab = targetEl.getAttribute('data-tab');
+            document.getElementById(targetTab).classList.add('active-tab');
+            elements.pageTitle.innerText = targetEl.getAttribute('title');
         });
     });
 
-    // Kill/Terminate Processes Feature
+    // --- Action Handlers ---
     elements.killBtn.addEventListener('click', async () => {
-        elements.killBtn.innerText = "Terminating...";
-        elements.killBtn.style.opacity = '0.7';
-        elements.killBtn.style.pointerEvents = 'none';
-
+        elements.killBtn.innerText = "Ending tasks...";
         try {
             const res = await fetch('/api/action/kill_process', { method: 'POST' });
-            if(res.ok) {
-                showToast("CRITICAL: Rogue tasks terminated successfully.", "var(--health-good)");
-            }
-        } catch(e) {
-            console.error("Failed to terminate process.");
-        }
-
-        setTimeout(() => {
-            elements.killBtn.innerText = "Terminate Rogue OpenClaw Tasks";
-            elements.killBtn.style.opacity = '1';
-            elements.killBtn.style.pointerEvents = 'all';
-        }, 1500);
+            if(res.ok) showToast("Rogue background tasks successfully killed.", "var(--health-good)");
+        } catch(e) {}
+        setTimeout(() => elements.killBtn.innerText = "End Rogue Tasks", 1500);
     });
+    
+    // PC Cleaner Button
+    const cleanTempBtn = document.getElementById('clean-temp-btn');
+    if(cleanTempBtn) {
+        cleanTempBtn.addEventListener('click', async () => {
+            cleanTempBtn.innerText = "Cleaning system files...";
+            cleanTempBtn.disabled = true;
+            try {
+                const res = await fetch('/api/action/clean_temp', { method: 'POST' });
+                const json = await res.json();
+                
+                const feedbackBox = document.getElementById('tuneup-feedback');
+                const savedText = document.getElementById('tuneup-saved-text');
+                
+                feedbackBox.style.display = 'block';
+                savedText.innerText = json.message;
+                showToast(json.message, "var(--health-good)");
+                
+            } catch(e) { showToast("Cleanup failed.", "var(--health-crit)"); }
+            
+            setTimeout(() => {
+                cleanTempBtn.innerText = "Clean Junk Files Instantly";
+                cleanTempBtn.disabled = false;
+            }, 3000);
+        });
+    }
 
-    function showToast(message, color = "var(--health-crit)") {
+    window.startScan = async function(type) {
+        try {
+            const res = await fetch(`/api/action/scan/${type}`, { method: 'POST' });
+            if(res.ok) {
+                elements.scanFeedback.style.display = 'block';
+                elements.scanStatusText.innerText = `Running ${type} engine scan...`;
+                document.querySelectorAll('.scan-card .sys-btn').forEach(b => b.disabled = true);
+            }
+        } catch(e) {}
+    };
+
+    function showToast(message, color = "var(--text-primary)") {
         const toast = document.createElement('div');
         toast.className = 'toast';
         toast.style.borderColor = color;
-        toast.innerHTML = `
-            <svg viewBox="0 0 24 24" width="24" height="24" stroke="${color}" stroke-width="2" fill="none">
-                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                <line x1="12" y1="9" x2="12" y2="13"></line>
-                <line x1="12" y1="17" x2="12.01" y2="17"></line>
-            </svg>
-            <div>${message}</div>
-        `;
+        toast.innerHTML = `<strong style="color: ${color}">System Notice:</strong> ${message}`;
         elements.toastContainer.appendChild(toast);
-        
-        // Remove toast after 4 seconds
-        setTimeout(() => {
-            toast.style.animation = 'fadeOut 0.3s forwards';
-            setTimeout(() => toast.remove(), 300);
-        }, 4000);
+        setTimeout(() => { toast.remove(); }, 3500);
     }
 
-    function renderLogs() {
-        elements.logsList.innerHTML = '';
-        
-        const filtered = currentLogs.filter(log => {
-            if (currentFilter === 'all') return true;
-            return log.level === currentFilter;
-        });
+    // --- Offline Native Canvas Graph Engine ---
+    // Zero dependencies to fix horizontal expansion bugs & offline crashes
+    const canvas = document.getElementById('customGraphCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Resize observer binds canvas strictly to the flex container dimensions
+    const resizeCanvas = () => {
+        const parent = canvas.parentElement;
+        canvas.width = parent.clientWidth;
+        canvas.height = parent.clientHeight;
+    };
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
 
-        if (filtered.length === 0) {
-            elements.logsList.innerHTML = '<div class="log-entry" style="justify-content:center; color: var(--text-secondary);">No logs found for current filter.</div>';
-            return;
+    const maxDataPoints = 60; // 60 seconds
+    let cpuHistory = Array(maxDataPoints).fill(0);
+
+    function drawGraph() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = '#0078D4'; // Windows accent
+        ctx.lineWidth = 2;
+        ctx.fillStyle = 'rgba(0, 120, 212, 0.15)'; // Fill below
+        
+        ctx.beginPath();
+        const stepX = canvas.width / (maxDataPoints - 1);
+        
+        // Move to start point for the fill area (bottom left)
+        ctx.moveTo(0, canvas.height);
+        
+        for (let i = 0; i < maxDataPoints; i++) {
+            const val = cpuHistory[i];
+            const x = i * stepX;
+            // Map 0-100 to Canvas Height
+            const y = canvas.height - (val / 100 * canvas.height);
+            ctx.lineTo(x, y);
+        }
+        
+        // Close the fill path strictly
+        ctx.lineTo(canvas.width, canvas.height);
+        ctx.closePath();
+        ctx.fill();
+
+        // Stroke line
+        ctx.beginPath();
+        for (let i = 0; i < maxDataPoints; i++) {
+            const val = cpuHistory[i];
+            const x = i * stepX;
+            const y = canvas.height - (val / 100 * canvas.height);
+            if (i === 0) ctx.moveTo(x, y);
+            else ctx.lineTo(x, y);
+        }
+        ctx.stroke();
+    }
+
+    // --- Core Data Sync ---
+    function updateDashboard(data) {
+        const tel = data.telemetry;
+        
+        // Status Indicators
+        elements.activeProcs.innerText = tel.active_processes;
+        
+        // Push to custom graph array
+        cpuHistory.push(tel.cpu_usage);
+        cpuHistory.shift(); 
+        drawGraph(); // Re-render canvas immediately
+        
+        // Side metrics
+        elements.cpuSideVal.innerText = `${tel.cpu_usage}%`;
+        elements.cpuMainVal.innerText = `${tel.cpu_usage}%`;
+        
+        elements.memSideVal.innerText = `${tel.memory_usage}%`;
+        
+        elements.netSideVal.innerText = `${tel.network_connections} Conn`;
+        elements.netMainVal.innerText = tel.network_connections;
+        
+        elements.healthScoreVal.innerText = tel.system_health === 100 ? "Healthy" : tel.system_health + "%";
+        if (tel.system_health < 80) elements.healthScoreVal.style.color = "var(--health-warn)";
+
+        // Logs Injection
+        elements.logsList.innerHTML = '';
+        if (tel.recent_logs.length === 0) {
+            elements.logsList.innerHTML = '<div class="log-entry">Waiting for OpenClaw daemon...</div>';
         }
 
-        filtered.forEach(log => {
+        tel.recent_logs.forEach(log => {
             const logEl = document.createElement('div');
-            logEl.className = `log-entry level-${log.level}`;
+            logEl.className = 'log-entry';
+            
+            let statusBadge = "bg-info";
+            let statusText = "Normal";
+            
+            if(log.level === 'CRIT'){ statusBadge = "bg-crit"; statusText = "Suspended"; }
+            else if(log.level === 'WARN'){ statusBadge = "bg-warn"; statusText = "Monitored"; }
+            
             logEl.innerHTML = `
-                <div class="log-time">${log.timestamp}</div>
-                <div class="log-tag tag-${log.level}">${log.level}</div>
-                <div class="log-msg">${log.message}</div>
+                <div class="col-name" style="font-family: monospace;">${log.message.substring(0, 60)}</div>
+                <div class="col-status"><span class="status-badge ${statusBadge}">${statusText}</span></div>
+                <div class="col-pid">${log.level === 'INFO' ? '-' : 'Quarantine Engine Engaged'}</div>
             `;
             elements.logsList.appendChild(logEl);
         });
-    }
 
-    function updateDashboard(data) {
-        // Update Health Score
-        elements.healthScore.textContent = `${data.system_health}%`;
-        
-        // Map 0-100 to stroke-dasharray (circumference is ~100)
-        elements.healthCircle.setAttribute('stroke-dasharray', `${data.system_health}, 100`);
-        
-        // Change colors globally based on health
-        if (data.system_health > 80) {
-            elements.healthCircle.style.stroke = "var(--health-good)";
-            elements.healthBadge.style.color = "var(--health-good)";
-            elements.healthBadge.innerText = "Optimal";
-        } else if (data.system_health > 40) {
-            elements.healthCircle.style.stroke = "var(--health-warn)";
-            elements.healthBadge.style.color = "var(--health-warn)";
-            elements.healthBadge.innerText = "Warning";
-        } else {
-            elements.healthCircle.style.stroke = "var(--health-crit)";
-            elements.healthBadge.style.color = "var(--health-crit)";
-            elements.healthBadge.innerText = "Critical";
-            elements.healthScore.style.fill = "var(--health-crit)";
-            elements.healthCircle.style.animation = "blink 1s infinite alternate";
+        // Scan Updates
+        if (data.scan.is_scanning) {
+            elements.scanFeedback.style.display = 'block';
+            elements.scanProgress.style.width = `${data.scan.progress}%`;
+            elements.scanThreats.innerText = `Threats identified: ${data.scan.threats_found}`;
+        } else if (elements.scanProgress.style.width === '100%') {
+            elements.scanStatusText.innerText = "Scan Complete.";
+            document.querySelectorAll('.scan-card .sys-btn').forEach(b => b.disabled = false);
+            setTimeout(() => elements.scanFeedback.style.display = 'none', 3000);
+            elements.scanProgress.style.width = '0%';
         }
 
-        if (data.system_health > 40) {
-             elements.healthScore.style.fill = "#fff";
-             elements.healthCircle.style.animation = "none";
-        }
-
-        // Update CPU/Mem
-        elements.cpuVal.innerText = data.cpu_usage;
-        elements.cpuBar.style.width = `${data.cpu_usage}%`;
-        elements.cpuBar.style.backgroundColor = data.cpu_usage > 85 ? "var(--health-crit)" : (data.cpu_usage > 65 ? "var(--health-warn)" : "var(--primary-blue)");
-
-        elements.memVal.innerText = data.memory_usage;
-        elements.memBar.style.width = `${data.memory_usage}%`;
-        elements.memBar.style.backgroundColor = data.memory_usage > 85 ? "var(--health-crit)" : (data.memory_usage > 65 ? "var(--health-warn)" : "var(--accent-cyan)");
-
-        // Update Anomaly Count
-        elements.anomalyCount.innerText = data.anomalies.length;
-        if(data.anomalies.length > 0) {
-            elements.anomalyCount.classList.add('warn-text');
-        } else {
-            elements.anomalyCount.classList.remove('warn-text');
-        }
-
-        // Update Logs
-        currentLogs = data.recent_logs;
-        renderLogs();
-
-        // Check for new critical/warn logs to show Toast
-        if (data.recent_logs.length > 0) {
-            const newestLog = data.recent_logs[0];
-            if (newestLog.id > lastLogId) {
-                if (newestLog.level === 'CRIT' || newestLog.level === 'WARN') {
-                    showToast(`[${newestLog.level}]: ${newestLog.message}`, newestLog.level === 'CRIT' ? "var(--health-crit)" : "var(--health-warn)");
-                }
-                lastLogId = newestLog.id;
+        // Toasts
+        if (tel.recent_logs.length > 0) {
+            const newest = tel.recent_logs[0];
+            if (newest.id > lastLogId) {
+                if (newest.level === 'CRIT') showToast(newest.message);
+                lastLogId = newest.id;
             }
         }
     }
 
-    // Polling function for live telemetry feeds
-    async function fetchTelemetry() {
+    // Interval fetcher
+    setInterval(async () => {
         try {
             const response = await fetch('/api/telemetry');
-            if (response.ok) {
-                const data = await response.json();
-                updateDashboard(data);
-            }
-        } catch (error) {
-            console.error('Error fetching telemetry:', error);
-            elements.healthBadge.innerText = "Offline";
-            elements.healthBadge.style.color = "var(--text-secondary)";
-            elements.healthCircle.style.stroke = "var(--text-secondary)";
-        }
-    }
-
-    // Start Polling every 1.5 seconds
-    setInterval(fetchTelemetry, 1500);
-    fetchTelemetry(); // Initial fetch
+            if (response.ok) updateDashboard(await response.json());
+        } catch (error) {}
+    }, 1000);
 });

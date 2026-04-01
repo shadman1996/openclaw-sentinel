@@ -3,116 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenClaw Sentinel</title>
-    <meta name="description" content="Cybersecurity anomaly detection and monitoring dashboard for OpenClaw autonomous agents.">
+    <title>OpenClaw Sentinel - Windows Edition</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <!-- Completely Offline: Removed Chart.js dependency to stop horizontal expansion breakages -->
 </head>
 <body>
-    <div class="glass-container">
-        <!-- Sidebar Navigation -->
-        <nav class="sidebar">
+    <div class="app-container">
+        
+        <!-- Windows 11 Task Manager Style Sidebar -->
+        <nav class="sidebar" id="sidebar">
             <div class="sidebar-header">
-                <div class="logo-icon"></div>
-                <h2>Claw<span class="accent">Sentinel</span></h2>
+                <svg class="hamburger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
             </div>
             <ul class="nav-links">
-                <li class="active">
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    Dashboard
+                <li class="nav-item active" data-tab="tab-processes" title="Processes">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                    <span class="nav-label">Processes</span>
                 </li>
-                <li>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Z"></path><path d="M12 6V12L16 14"></path></svg>
-                    Event Logs
+                <li class="nav-item" data-tab="tab-performance" title="Performance">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                    <span class="nav-label">Performance</span>
                 </li>
-                <li>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><path d="M18 8A6 6 0 0 0 6 8C6 15 3 17 3 17H21C21 17 18 15 18 8Z"></path><path d="M13.73 21A2 2 0 0 1 10.27 21"></path></svg>
-                    Threat Alerts
+                <li class="nav-item" data-tab="tab-av" title="Virus & threat protection">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span class="nav-label">Threat Scan</span>
                 </li>
-                <li>
-                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                    Process Monitor
+                <li class="nav-item" data-tab="tab-tuneup" title="System Tune-Up">
+                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    <span class="nav-label">System Tune-Up</span>
                 </li>
             </ul>
         </nav>
 
-        <!-- Main Content Area -->
+        <!-- Main Content Viewport -->
         <main class="main-content">
+            
             <header class="top-header">
-                <h1>System Overview</h1>
+                <h1 id="page-title">Processes</h1>
                 <div class="status-indicator">
                     <span class="pulse-dot" id="connection-status"></span>
-                    <span>Monitoring Active</span>
+                    <span id="health-badge">Optimal</span>
                 </div>
             </header>
 
-            <div class="dashboard-grid">
+            <!-- TAB 1: PROCESSES & LOGS (Default) -->
+            <div id="tab-processes" class="tab-pane active-tab">
+                <div class="action-bar">
+                    <button id="kill-all-btn" class="sys-btn danger">End Rogue Tasks</button>
+                    <div style="flex:1"></div>
+                    <span style="color:var(--text-secondary); font-size: 0.9rem;">Total Active: <b id="active-procs" style="color:var(--text-primary);">0</b></span>
+                </div>
                 
-                <!-- Health Score Card -->
-                <div class="card glass-panel health-card">
-                    <div class="card-header">
-                        <h3>System Integrity</h3>
-                        <span class="badge" id="health-badge">Optimal</span>
-                    </div>
-                    <div class="health-display">
-                        <svg class="circular-chart" viewBox="0 0 36 36">
-                            <path class="circle-bg"
-                                d="M18 2.0845
-                                a 15.9155 15.9155 0 0 1 0 31.831
-                                a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                            <path class="circle" id="health-circle"
-                                stroke-dasharray="100, 100"
-                                d="M18 2.0845
-                                a 15.9155 15.9155 0 0 1 0 31.831
-                                a 15.9155 15.9155 0 0 1 0 -31.831"
-                            />
-                            <text x="18" y="20.35" class="percentage" id="health-score">100%</text>
-                        </svg>
-                    </div>
-                </div>
-
-                <!-- Metrics Cards -->
-                <div class="metrics-container">
-                    <div class="card glass-panel metric-box">
-                        <div class="metric-title">CPU Utilization</div>
-                        <div class="metric-value"><span id="cpu-val">--</span>%</div>
-                        <div class="progress-bar-bg"><div class="progress-bar" id="cpu-bar"></div></div>
-                    </div>
-                    <div class="card glass-panel metric-box">
-                        <div class="metric-title">Memory Footprint</div>
-                        <div class="metric-value"><span id="mem-val">--</span>%</div>
-                        <div class="progress-bar-bg"><div class="progress-bar" id="mem-bar"></div></div>
-                    </div>
-                    <div class="card glass-panel active-proc-box">
-                        <div class="proc-header">
-                            <div>
-                                <div class="metric-title">Rogue Processes Identified</div>
-                                <div class="metric-value warn-text" id="anomaly-count">0</div>
-                            </div>
-                            <button id="kill-all-btn" class="action-btn">Terminate Rogue OpenClaw Tasks</button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Live Threat Feed -->
-                <div class="card glass-panel logs-card">
-                    <div class="card-header">
-                        <h3>Live Telemetry & Threat Feed</h3>
-                        <div class="log-filters">
-                            <button class="filter-btn active" data-filter="all">All Logs</button>
-                            <button class="filter-btn" data-filter="WARN">Warnings</button>
-                            <button class="filter-btn" data-filter="CRIT">Critical</button>
-                        </div>
+                <div class="card full-height log-card">
+                    <div class="grid-header">
+                        <div class="col-name">Name</div>
+                        <div class="col-status">Status</div>
+                        <div class="col-pid">Evaluation</div>
                     </div>
                     <div class="logs-container" id="logs-list">
-                        <!-- Logs will be dynamically injected here -->
-                        <div class="log-entry phantom-loader">Connecting to OpenClaw Engine...</div>
+                        <div class="log-entry">Loading OpenClaw AI Evaluations...</div>
                     </div>
                 </div>
-
             </div>
+
+            <!-- TAB 2: PERFORMANCE (Graphs) -->
+            <div id="tab-performance" class="tab-pane">
+                <!-- 
+                    The graph horizontal expansion bug occurred because 
+                    Chart.js forces the canvas width to explode if its wrapper 
+                    does not strictly constrain it via flex/overflow. I've engineered 
+                    a strictly-bound native canvas instead!
+                -->
+                <div class="performance-grid">
+                    <div class="perf-sidebar">
+                        <div class="perf-item active">
+                            <div class="perf-name">CPU</div>
+                            <div class="perf-val" id="cpu-side-val">0%</div>
+                            <div class="perf-graph-mini" id="cpu-mini-graph"></div>
+                        </div>
+                        <div class="perf-item">
+                            <div class="perf-name">Memory</div>
+                            <div class="perf-val" id="mem-side-val">0%</div>
+                            <div class="perf-graph-mini" id="mem-mini-graph"></div>
+                        </div>
+                        <div class="perf-item">
+                            <div class="perf-name">Network</div>
+                            <div class="perf-val" id="net-side-val">0 Conn</div>
+                            <div class="perf-graph-mini" id="net-mini-graph"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="perf-main">
+                        <h2>CPU Utilization</h2>
+                        <div class="graph-wrapper">
+                            <canvas id="customGraphCanvas"></canvas>
+                        </div>
+                        <div class="perf-stats">
+                            <div>
+                                <div class="stat-label">Utilization</div>
+                                <div class="stat-val" id="cpu-main-val">0%</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">System Health Matrix</div>
+                                <div class="stat-val" id="health-score-val">100%</div>
+                            </div>
+                            <div>
+                                <div class="stat-label">Active Sockets</div>
+                                <div class="stat-val" id="net-main-val">0</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 3: THREAT SCAN -->
+            <div id="tab-av" class="tab-pane">
+                <div class="card scan-card">
+                    <h2>OpenClaw Anti-Malware</h2>
+                    <p style="color: var(--text-secondary); margin: 10px 0 30px;">
+                        Perform deep inspection of background tasks utilizing local AI heuristics via Gemini.
+                    </p>
+                    
+                    <div style="display: flex; gap: 15px;">
+                        <button class="sys-btn primary" onclick="startScan('quick')">Quick scan</button>
+                        <button class="sys-btn" onclick="startScan('full')">Full Heuristic sweep</button>
+                    </div>
+
+                    <div id="scan-feedback" class="scan-feedback">
+                        <h3 id="scan-status-text">Ready to scan.</h3>
+                        <div class="scan-progress-bar-bg">
+                            <div class="scan-progress-bar" id="scan-progress"></div>
+                        </div>
+                        <p id="scan-threats-found" style="margin-top: 15px;"></p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: SYSTEM TUNE-UP -->
+            <div id="tab-tuneup" class="tab-pane">
+                <div class="card scan-card">
+                    <h2>Aggressive System Tune-Up</h2>
+                    <p style="color: var(--text-secondary); margin: 10px 0 30px;">
+                        Make your PC faster instantly. Delete GBs of permanently disposable %TEMP% and OS Prefetch payload data bypassing the Recycle Bin entirely.
+                    </p>
+                    
+                    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
+                        <button class="sys-btn primary" id="clean-temp-btn" style="padding: 12px 24px; font-size: 1rem;">Clean Junk Files Instantly</button>
+                    </div>
+
+                    <div id="tuneup-feedback" class="scan-feedback" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--health-good);">
+                        <h3 id="tuneup-status-text" style="color: var(--health-good);">Optimization Engine Engaged.</h3>
+                        <p id="tuneup-saved-text" style="margin-top: 10px; font-size: 1.1rem;"></p>
+                    </div>
+                </div>
+            </div>
+
         </main>
     </div>
 
