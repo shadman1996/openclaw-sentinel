@@ -15,6 +15,12 @@ OpenClaw Sentinel has evolved into a Tier-1 Cybersecurity and Optimization Hub. 
 * **60FPS Hardware Telemetry:** Blistering 500ms `asyncio` loops reading direct WMI/ctypes streams for CPU/GPU/RAM/Network analytics graphed on 5 simultaneous `Chart.js` engines.
 * **Security Auditor:** Active interrogation of your firewall state and Open Listening network sockets.
 
+### Additional Updates (v2.1):
+* **Advanced OS Optimization Tier:** 10+ new deep-system capabilities including Hardware-Accelerated GPU Scheduling (HAGS), Ultimate Performance Power Plan generation, UI Visual Effects minimizing, and Registry/Browser cache cleaning protocols.
+* **Hardware & Tooling Hooks:** Direct API detection and launching of AMD Ryzen Master or Intel XTU based on physical CPU architectures, plus native Microsoft PC Manager integration.
+* **Startup App Manager:** Deep scans of both HKCU and HKLM registry hives, allowing you to view and dynamically disable background applications attempting to boot with Windows directly from the web interface.
+* **Task Manager UI Engine:** Complete visual overhaul featuring mobile-responsive gradient data grids. Tracks dynamic per-core CPU loads, exact zero'd memory standby lists, aggregate disk I/O metrics, and real-time socket latency graphs.
+
 ## Standard Operating Procedure (Mobile Access)
 This architecture is specifically engineered to act as a **Remote Sentinel** viewable natively from your iOS or Android device while running on your physical PC.
 

@@ -12,7 +12,8 @@ import shutil
 import ctypes
 import winreg
 from ctypes import wintypes
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
+import optimization
 
 # Support PyInstaller internal temp directories
 if getattr(sys, 'frozen', False):
@@ -46,7 +47,8 @@ telemetry_data = {
 audit_data = {
     "open_ports": 0,
     "firewall_active": "Unknown",
-    "pending_updates": "Unknown"
+    "pending_updates": "Unknown",
+    "sockets": []
 }
 
 # Asyncio Trackers
@@ -164,25 +166,71 @@ def run_asyncio_loop():
 def run_security_audit():
     """Performs deep OS scanning for open ports, firewall, and pending updates."""
     global audit_data
+    import socket as _socket
+
+    # Known port names for labelling
+    PORT_NAMES = {
+        21: "FTP", 22: "SSH", 23: "Telnet", 25: "SMTP", 53: "DNS",
+        80: "HTTP", 110: "POP3", 135: "RPC", 137: "NetBIOS", 138: "NetBIOS",
+        139: "NetBIOS", 143: "IMAP", 443: "HTTPS", 445: "SMB",
+        1433: "MSSQL", 1434: "MSSQL-UDP", 3306: "MySQL", 3389: "RDP",
+        5900: "VNC", 5985: "WinRM", 5986: "WinRM-SSL", 8080: "HTTP-Alt",
+        8443: "HTTPS-Alt", 27017: "MongoDB",
+    }
+
     try:
-        # Ports
         conns = psutil.net_connections(kind='inet')
-        audit_data["open_ports"] = len([c for c in conns if c.status == 'LISTEN'])
-        
+        listening = sorted(
+            [c for c in conns if c.status == 'LISTEN'],
+            key=lambda c: c.laddr.port
+        )
+        audit_data["open_ports"] = len(listening)
+
+        sockets = []
+        for c in listening:
+            # Resolve process name safely
+            proc_name = "System"
+            if c.pid:
+                try:
+                    proc_name = psutil.Process(c.pid).name()
+                except (psutil.NoSuchProcess, psutil.AccessDenied):
+                    proc_name = "Access Denied"
+
+            proto = "TCP" if c.type == _socket.SOCK_STREAM else "UDP"
+            port  = c.laddr.port
+            addr  = c.laddr.ip or "0.0.0.0"
+            label = PORT_NAMES.get(port, "")
+
+            sockets.append({
+                "port":    port,
+                "label":   label,
+                "proto":   proto,
+                "addr":    addr,
+                "pid":     c.pid or 0,
+                "process": proc_name,
+            })
+
+        audit_data["sockets"] = sockets
+
         # Firewall
         fw = subprocess.getoutput('netsh advfirewall show allprofiles state')
-        if "ON" in fw.upper(): audit_data["firewall_active"] = "Active & Enforcing"
-        else: audit_data["firewall_active"] = "WARNING: Disabled"
-        
-        # Updates
+        if "ON" in fw.upper():
+            audit_data["firewall_active"] = "Active & Enforcing"
+        else:
+            audit_data["firewall_active"] = "WARNING: Disabled"
+
+        # Pending Windows Updates
         try:
-            reg_key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired")
+            reg_key = winreg.OpenKey(
+                winreg.HKEY_LOCAL_MACHINE,
+                r"SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired"
+            )
             audit_data["pending_updates"] = "CRITICAL: Reboot Pending for Update"
             winreg.CloseKey(reg_key)
         except WindowsError:
             audit_data["pending_updates"] = "System Up-to-Date"
-            
-    except Exception as e:
+
+    except Exception:
         pass
 
 @app.route("/")
@@ -249,6 +297,81 @@ def one_click_shield():
 def trigger_audit():
     run_security_audit()
     return jsonify({"status": "success", "message": "Security Audit Completed. Parameters updated."})
+
+@app.route("/api/optimize/power", methods=["POST"])
+def optimize_power():
+    success, msg = optimization.set_high_performance_power_plan()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/gamemode", methods=["POST"])
+def optimize_gamemode():
+    success, msg = optimization.enable_game_mode()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/visual", methods=["POST"])
+def optimize_visual():
+    success, msg = optimization.optimize_visual_effects()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/background", methods=["POST"])
+def optimize_background():
+    success, msg = optimization.disable_background_apps()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/disk", methods=["POST"])
+def optimize_disk():
+    success, msg = optimization.run_disk_cleanup()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/hags", methods=["POST"])
+def optimize_hags():
+    success, msg = optimization.enable_hags()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/drivers", methods=["POST"])
+def optimize_drivers():
+    success, msg = optimization.check_driver_updates()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/registry", methods=["POST"])
+def optimize_registry():
+    success, msg = optimization.clean_registry()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/browser", methods=["POST"])
+def optimize_browser():
+    success, msg = optimization.clean_browser_cache()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/graphics", methods=["POST"])
+def optimize_graphics():
+    success, msg = optimization.set_graphics_performance()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/pbo", methods=["POST"])
+def optimize_pbo():
+    success, msg = optimization.open_pbo_tool()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/optimize/pcmanager", methods=["POST"])
+def optimize_pcmanager():
+    success, msg = optimization.open_pc_manager()
+    return jsonify({"status": "success" if success else "error", "message": msg})
+
+@app.route("/api/startup/list", methods=["GET"])
+def startup_list():
+    apps = optimization.get_startup_apps()
+    return jsonify({"status": "success", "apps": apps})
+
+@app.route("/api/startup/disable", methods=["POST"])
+def startup_disable():
+    data = request.get_json(silent=True) or {}
+    name = data.get("name", "")
+    hive = data.get("hive", "HKCU")
+    if not name:
+        return jsonify({"status": "error", "message": "No app name provided."})
+    success, msg = optimization.disable_startup_app(name, hive)
+    return jsonify({"status": "success" if success else "error", "message": msg})
 
 if __name__ == "__main__":
     run_security_audit()

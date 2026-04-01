@@ -20,3 +20,8 @@ logs/
 # IDEs
 .vscode/
 .idea/
+
+# PyInstaller
+build/
+dist/
+*.spec

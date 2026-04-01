@@ -30,86 +30,237 @@
             <button class="nav-toggle" id="navToggle">≡</button>
         </header>
 
-        <!-- Sidebar Navigation -->
-        <nav class="cyber-nav" id="sidebar">
-            <ul class="nav-links">
-                <li class="nav-item active" data-tab="tab-hardware">🛡️ Hardware Matrix</li>
-                <li class="nav-item" data-tab="tab-optimizer">⚡ Smart Optimizer</li>
-                <li class="nav-item" data-tab="tab-audit">🔒 Security Audit</li>
-            </ul>
-            <div class="nav-footer">
-                <div class="conn-status"><span class="pulse"></span> 0.0.0.0 Active</div>
-            </div>
-        </nav>
-
         <!-- Main Content Frames -->
         <main class="cyber-main">
 
-            <!-- TAB 1: Hardware Metrics (60FPS Chart.js) -->
+            <!-- Sidebar Navigation (inside cyber-main so it sits beside content, not above) -->
+            <nav class="cyber-nav" id="sidebar">
+                <ul class="nav-links">
+                    <li class="nav-item active" data-tab="tab-hardware">🛡️ Hardware Matrix</li>
+                    <li class="nav-item" data-tab="tab-optimizer">⚡ Smart Optimizer</li>
+                    <li class="nav-item" data-tab="tab-audit">🔒 Security Audit</li>
+                </ul>
+                <div class="nav-footer">
+                    <div class="conn-status"><span class="pulse"></span> 0.0.0.0 Active</div>
+                </div>
+            </nav>
+
+            <!-- TAB 1: Hardware Metrics — Task Manager Style -->
             <div id="tab-hardware" class="tab-pane active-tab">
+
+                <!-- MOBILE STATS VIEW (hidden on desktop) -->
+                <div class="mobile-stats-grid">
+
+                    <div class="mob-tile glass-panel glow-border">
+                        <div class="mob-tile-top">
+                            <span class="mob-tile-name">CPU</span>
+                            <span class="mob-tile-val green" id="mob-cpu-val">0%</span>
+                        </div>
+                        <div class="mob-bar-track">
+                            <div class="mob-bar-fill green" id="mob-cpu-bar"></div>
+                        </div>
+                        <div class="mob-tile-subs">
+                            <span>Temp <strong id="mob-cpu-temp">N/A</strong></span>
+                            <span>Cores <strong id="mob-cpu-cores">—</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="mob-tile glass-panel glow-border">
+                        <div class="mob-tile-top">
+                            <span class="mob-tile-name">MEMORY</span>
+                            <span class="mob-tile-val cyan" id="mob-ram-val">0%</span>
+                        </div>
+                        <div class="mob-bar-track">
+                            <div class="mob-bar-fill cyan" id="mob-ram-bar"></div>
+                        </div>
+                        <div class="mob-tile-subs">
+                            <span>Used <strong id="mob-ram-used">0 GB</strong></span>
+                            <span>Total <strong id="mob-ram-total">0 GB</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="mob-tile glass-panel glow-border">
+                        <div class="mob-tile-top">
+                            <span class="mob-tile-name">GPU</span>
+                            <span class="mob-tile-val orange" id="mob-gpu-val">0%</span>
+                        </div>
+                        <div class="mob-bar-track">
+                            <div class="mob-bar-fill orange" id="mob-gpu-bar"></div>
+                        </div>
+                        <div class="mob-tile-subs">
+                            <span>Temp <strong id="mob-gpu-temp">N/A</strong></span>
+                            <span class="mob-sub-truncate" id="mob-gpu-model">Polling...</span>
+                        </div>
+                    </div>
+
+                    <div class="mob-tile glass-panel glow-border">
+                        <div class="mob-tile-top">
+                            <span class="mob-tile-name">DISK</span>
+                            <span class="mob-tile-val red" id="mob-disk-iops">0 IO/s</span>
+                        </div>
+                        <div class="mob-bar-track">
+                            <div class="mob-bar-fill red" id="mob-disk-bar"></div>
+                        </div>
+                        <div class="mob-tile-subs">
+                            <span>↓ Read <strong id="mob-disk-read">0 MB/s</strong></span>
+                            <span>↑ Write <strong id="mob-disk-write">0 MB/s</strong></span>
+                        </div>
+                    </div>
+
+                    <div class="mob-tile mob-tile-full glass-panel glow-border">
+                        <div class="mob-tile-top">
+                            <span class="mob-tile-name">NETWORK</span>
+                            <span class="mob-tile-val yellow" id="mob-net-latency">0ms</span>
+                        </div>
+                        <div class="mob-bar-track">
+                            <div class="mob-bar-fill yellow" id="mob-net-bar"></div>
+                        </div>
+                        <div class="mob-tile-subs">
+                            <span>↓ Down <strong id="mob-net-down">0 MB/s</strong></span>
+                            <span>↑ Up <strong id="mob-net-up">0 MB/s</strong></span>
+                            <span>Ping <strong id="mob-net-lat">N/A</strong></span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- DESKTOP CHART GRID (hidden on mobile) -->
                 <div class="chart-grid">
-                    
+
                     <!-- CPU Node -->
                     <div class="sys-node glass-panel glow-border">
                         <div class="node-header">
-                            <div><span class="node-title">CPU.CORE</span> <span id="cpu-temp" class="node-temp">N/A</span></div>
-                            <span class="node-val" id="cpu-val">0%</span>
+                            <div>
+                                <span class="node-title">CPU</span>
+                                <span id="cpu-temp" class="node-temp">N/A</span>
+                            </div>
+                            <span class="node-val green" id="cpu-val">0%</span>
                         </div>
                         <div class="chart-wrapper"><canvas id="cpuChart"></canvas></div>
+                        <div class="node-stats">
+                            <div class="stat-tile">
+                                <span class="stat-label">Utilization</span>
+                                <span class="stat-val green" id="cpu-util-s">0%</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Temperature</span>
+                                <span class="stat-val" id="cpu-temp-s">N/A</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Cores</span>
+                                <span class="stat-val" id="cpu-cores-s">—</span>
+                            </div>
+                        </div>
+                        <div id="cpu-core-bars" class="core-bars"></div>
                     </div>
 
                     <!-- RAM Node -->
                     <div class="sys-node glass-panel glow-border">
                         <div class="node-header">
-                            <div><span class="node-title">MEM.ALLOC</span> <span class="node-sub">Total: <span id="ram-total"></span>GB</span></div>
-                            <span class="node-val" id="ram-val">0%</span>
+                            <div>
+                                <span class="node-title">MEMORY</span>
+                                <span class="node-sub">RAM</span>
+                            </div>
+                            <span class="node-val cyan" id="ram-val">0%</span>
                         </div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top:-5px;">Standby List: <span id="ram-standby" style="color:var(--text-glow);">Unknown</span></div>
                         <div class="chart-wrapper"><canvas id="ramChart"></canvas></div>
+                        <div class="node-stats">
+                            <div class="stat-tile">
+                                <span class="stat-label">In Use</span>
+                                <span class="stat-val cyan" id="ram-used-s">0 GB</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Total</span>
+                                <span class="stat-val" id="ram-total">0 GB</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Standby</span>
+                                <span class="stat-val" id="ram-standby">N/A</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- GPU Node -->
                     <div class="sys-node glass-panel glow-border">
                         <div class="node-header">
-                            <div><span class="node-title">GPU.STREAM</span> <span id="gpu-temp" class="node-temp">N/A</span></div>
-                            <span class="node-val" id="gpu-val">0%</span>
+                            <div>
+                                <span class="node-title">GPU</span>
+                                <span id="gpu-temp" class="node-temp">N/A</span>
+                            </div>
+                            <span class="node-val orange" id="gpu-val">0%</span>
                         </div>
-                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top:-5px;" id="gpu-model">NVIDIA GPU Polling...</div>
+                        <div class="node-sub" id="gpu-model" style="margin-top:-4px; margin-bottom: 4px;">Polling...</div>
                         <div class="chart-wrapper"><canvas id="gpuChart"></canvas></div>
+                        <div class="node-stats">
+                            <div class="stat-tile">
+                                <span class="stat-label">GPU Load</span>
+                                <span class="stat-val orange" id="gpu-load-s">0%</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Temperature</span>
+                                <span class="stat-val" id="gpu-temp-s">N/A</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- DISK IO Node -->
                     <div class="sys-node glass-panel glow-border">
                         <div class="node-header">
-                            <div><span class="node-title">DISK.IOPS</span> <span class="node-sub">R/W Matrix</span></div>
-                            <span class="node-val" id="disk-iops">0 IO/s</span>
-                        </div>
-                        <div class="rw-stats">
-                            <div>R <span id="disk-read" style="color:#00ff88;">0</span> MB/s</div>
-                            <div>W <span id="disk-write" style="color:#ff3366;">0</span> MB/s</div>
+                            <div>
+                                <span class="node-title">DISK</span>
+                                <span class="node-sub">I/O</span>
+                            </div>
+                            <span class="node-val red" id="disk-iops">0 IO/s</span>
                         </div>
                         <div class="chart-wrapper"><canvas id="diskChart"></canvas></div>
+                        <div class="node-stats">
+                            <div class="stat-tile">
+                                <span class="stat-label">Read</span>
+                                <span class="stat-val green" id="disk-read">0 MB/s</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Write</span>
+                                <span class="stat-val red" id="disk-write">0 MB/s</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">IOPS</span>
+                                <span class="stat-val" id="disk-iops-s">0</span>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- NETWORK Node -->
-                    <div class="sys-node glass-panel glow-border" style="grid-column: span 1;">
+                    <div class="sys-node glass-panel glow-border">
                         <div class="node-header">
-                            <div><span class="node-title">NET.SOCKET</span> <span class="node-sub">Ext. Tracing</span></div>
-                            <span class="node-val" id="net-latency">0ms</span>
-                        </div>
-                        <div class="rw-stats">
-                            <div>↓ <span id="net-down" style="color:#00ff88;">0</span> MB/s</div>
-                            <div>↑ <span id="net-up" style="color:#ff3366;">0</span> MB/s</div>
+                            <div>
+                                <span class="node-title">NETWORK</span>
+                                <span class="node-sub">Socket Trace</span>
+                            </div>
+                            <span class="node-val yellow" id="net-latency">0ms</span>
                         </div>
                         <div class="chart-wrapper"><canvas id="netChart"></canvas></div>
+                        <div class="node-stats">
+                            <div class="stat-tile">
+                                <span class="stat-label">Download</span>
+                                <span class="stat-val green" id="net-down">0 MB/s</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Upload</span>
+                                <span class="stat-val red" id="net-up">0 MB/s</span>
+                            </div>
+                            <div class="stat-tile">
+                                <span class="stat-label">Latency</span>
+                                <span class="stat-val yellow" id="net-lat-s">N/A</span>
+                            </div>
+                        </div>
                     </div>
 
-                </div>
-            </div>
+                </div><!-- end chart-grid -->
+            </div><!-- end tab-hardware -->
 
             <!-- TAB 2: Smart Optimizer (Ctypes Hook) -->
             <div id="tab-optimizer" class="tab-pane">
-                <div class="shield-container glass-panel glow-border text-center">
+                <div class="one-click-panel glass-panel glow-border">
                     <h2 style="margin-bottom: 20px; font-family: 'Orbitron'; font-size: 2rem; color: var(--text-glow);">ONE-CLICK SHIELD</h2>
                     <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.6;">
                         Engage raw `ctypes.windll` API calls to flush Windows Memory Standby caches, execute explicit `ipconfig /flushdns` socket resets, and instantly eliminate temporary payloads via backend OS mapping.
@@ -121,29 +272,124 @@
                         <div class="efficiency-gain" id="eff-gain">+0%</div>
                         <div class="feedback-logs" id="fb-logs"></div>
                     </div>
+                </div><!-- end one-click-panel -->
+
+                <div class="opt-tier glass-panel glow-border">
+                    <h2 class="opt-tier-title">OS OPTIMIZATION TIER</h2>
+                    <div class="opt-grid">
+                        <button class="opt-btn" onclick="triggerOpt('power')">
+                            <span class="opt-icon">⚡</span>Max Power Plan
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('gamemode')">
+                            <span class="opt-icon">🎮</span>Game Mode
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('hags')">
+                            <span class="opt-icon">🖥️</span>Enable HAGS
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('visual')">
+                            <span class="opt-icon">✨</span>Optimize Visuals
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('background')">
+                            <span class="opt-icon">🔕</span>Disable BG Apps
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('disk')">
+                            <span class="opt-icon">💿</span>Disk Cleanup
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('registry')">
+                            <span class="opt-icon">🗂️</span>Registry Clean
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('browser')">
+                            <span class="opt-icon">🌐</span>Browser Cache
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('drivers')">
+                            <span class="opt-icon">🔧</span>Driver Updates
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('graphics')">
+                            <span class="opt-icon">🎯</span>GPU Scheduler
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('pbo')">
+                            <span class="opt-icon">🔥</span>OC / PBO Tool
+                        </button>
+                        <button class="opt-btn" onclick="triggerOpt('pcmanager')">
+                            <span class="opt-icon">🛠️</span>PC Manager
+                        </button>
+                    </div>
+                    <div id="opt-feedback" class="opt-feedback"></div>
+                </div>
+
+                <!-- Startup App Manager -->
+                <div class="startup-panel glass-panel glow-border">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;">
+                        <h2 style="font-family: 'Orbitron'; font-size: 1.5rem; color: var(--text-glow);">STARTUP MANAGER</h2>
+                        <button class="shield-btn" style="padding: 10px 20px; font-size: 0.85rem; max-width: 200px;" onclick="loadStartupApps()">Scan Startup Apps</button>
+                    </div>
+                    <div id="startup-status" style="color: var(--text-muted); font-size: 0.85rem; margin-bottom: 10px;"></div>
+                    <div id="startup-list" style="display: flex; flex-direction: column; gap: 8px;"></div>
                 </div>
             </div>
 
             <!-- TAB 3: Security Audit -->
             <div id="tab-audit" class="tab-pane">
+
+                <!-- Summary strip -->
                 <div class="audit-grid">
                     <div class="audit-card glass-panel glow-border">
                         <h3>Firewall Integrity</h3>
                         <p class="audit-val" id="aud-fw">Scanning...</p>
                     </div>
                     <div class="audit-card glass-panel glow-border">
-                        <h3>Vulnerable Open Sockets</h3>
-                        <p class="audit-val" id="aud-ports" style="font-size:3rem; color: #ff3366;">0</p>
-                        <p style="color:var(--text-muted); font-size: 0.8rem;">LISTENING State Detected</p>
+                        <h3>Open Sockets</h3>
+                        <p class="audit-val" id="aud-ports" style="font-size:3rem; color:#ff3366;">0</p>
+                        <p style="color:var(--text-muted);font-size:0.78rem;">LISTENING</p>
                     </div>
                     <div class="audit-card glass-panel glow-border">
                         <h3>OS Update Status</h3>
                         <p class="audit-val" id="aud-reboot">Scanning...</p>
                     </div>
                 </div>
+
+                <!-- Socket Manifest -->
+                <div class="glass-panel glow-border socket-panel">
+                    <div class="socket-panel-header">
+                        <span class="socket-panel-title">LISTENING SOCKET MANIFEST</span>
+                        <button class="rescan-btn" onclick="rescanAudit()">↻ Re-scan</button>
+                    </div>
+
+                    <!-- Column headers -->
+                    <div class="socket-header-row">
+                        <span>Port</span>
+                        <span>Protocol</span>
+                        <span>Address</span>
+                        <span>Process</span>
+                        <span>PID</span>
+                        <span>Risk</span>
+                    </div>
+
+                    <div id="socket-list">
+                        <p class="socket-empty">Running initial scan...</p>
+                    </div>
+                </div>
+
             </div>
 
         </main>
+
+        <!-- Mobile Bottom Tab Bar (replaces hamburger sidebar on phones) -->
+        <nav class="mob-bottom-nav" id="mobBottomNav">
+            <div class="mob-nav-item active" data-tab="tab-hardware">
+                <span class="mob-nav-icon">🛡️</span>
+                <span class="mob-nav-label">Monitor</span>
+            </div>
+            <div class="mob-nav-item" data-tab="tab-optimizer">
+                <span class="mob-nav-icon">⚡</span>
+                <span class="mob-nav-label">Optimize</span>
+            </div>
+            <div class="mob-nav-item" data-tab="tab-audit">
+                <span class="mob-nav-icon">🔒</span>
+                <span class="mob-nav-label">Security</span>
+            </div>
+        </nav>
+
     </div>
 
     <!-- Mobile-Responsive Javascript Controller -->
