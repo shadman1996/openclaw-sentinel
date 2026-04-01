@@ -1,0 +1,16 @@
+{
+  "name": "OpenClaw Sentinel",
+  "short_name": "Sentinel",
+  "description": "Gold Standard Cybersecurity Sentinel and Remote Monitor",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07090f",
+  "theme_color": "#00f0ff",
+  "icons": [
+    {
+      "src": "/static/icons/icon.png",
+      "sizes": "192x192 512x512",
+      "type": "image/png"
+    }
+  ]
+}

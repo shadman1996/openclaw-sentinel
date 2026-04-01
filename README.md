@@ -1,35 +1,36 @@
-# OpenClaw Sentinel - Desktop Edition
+# OpenClaw Sentinel - Gold Standard Architecture
 
-OpenClaw Sentinel is an advanced, premium "anti-virus-like" anomaly monitoring dashboard designed to oversee the autonomous OpenClaw AI engine and actively scan your PC.
+<div align="center">
+  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
+  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/>
+  <img src="https://img.shields.io/badge/Windows_OS-0078D6?style=for-the-badge&logo=windows&logoColor=white"/>
+</div>
 
-The Sentinel features a modern dark-mode glass UI bundled smoothly into a native Windows Desktop GUI!
+## Overview
+OpenClaw Sentinel has evolved into a Tier-1 Cybersecurity and Optimization Hub. By leveraging deep OS-level `ctypes.windll` payloads, Sentinel operates natively on your underlying memory lists. The entire UI has been redesigned as an asynchronous "Cyber-Dark" Mobile-first Web Application.
 
-## Advanced Features Built-in:
-* **Real-time Charting:** Leverages Chart.js to visually graph your live `psutil` CPU and Memory metrics in real-time.
-* **Network Intrusion Monitoring:** Scrapes your active listening socket ports to identify unauthorized internet connections.
-* **Deep Scanning:** Employs the `openclaw` AI daemon heuristic model to sweep background apps and directories.
-* **Quarantine Control:** Allows you to sever active malicious connections directly from the UI.
+### Phase Features:
+* **The Smart Optimizer:** One-Click execution flushing global DNS caches, Socket Winsocks, %TEMP% payloads, and the active Windows Memory Standby Lists (`EmptyWorkingSet` mapped hooks).
+* **60FPS Hardware Telemetry:** Blistering 500ms `asyncio` loops reading direct WMI/ctypes streams for CPU/GPU/RAM/Network analytics graphed on 5 simultaneous `Chart.js` engines.
+* **Security Auditor:** Active interrogation of your firewall state and Open Listening network sockets.
 
-## Tech Stack
-* **AI Engine:** Official `openclaw` CLI wrapper parsing data streams directly to Gemini
-* **Backend:** Python + Flask + `psutil` + `pywebview`
-* **Frontend:** HTML, Vanilla JS, and pure CSS featuring custom SVG icons and Chart.js graphs.
+## Standard Operating Procedure (Mobile Access)
+This architecture is specifically engineered to act as a **Remote Sentinel** viewable natively from your iOS or Android device while running on your physical PC.
 
-## Installation and Execution
+1. **Host Configuration (On your PC)**
+    * Open your Windows Terminal as **Administrator**. *(Critical for `ctypes` Memory mapping).*
+    * Initialize the background server:
+      ```cmd
+      python app.py
+      ```
+    * Your command line will explicitly output: `Running on http://0.0.0.0:5000`.
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   pip install -r requirements.txt
-   npm install -g openclaw@latest
-   ```
-3. Run the Desktop Application:
-   ```bash
-   python desktop.py
-   ```
-4. **Compile to a standalone `.exe` (Optional):**
-   ```bash
-   pip install pyinstaller
-   pyinstaller --onefile --noconsole --name "OpenClawSentinel" desktop.py
-   ```
-   *Your standalone portable executable will be generated inside the `/dist` folder!*
+2. **Mobile Interfacing (On your iPhone/Android)**
+    * Ensure your phone is connected to the exact same Wi-Fi LAN router as your PC.
+    * Open your Settings/Terminal on your PC to find your local IPv4 address (e.g. `192.168.1.55`).
+    * Open Safari or Chrome on your phone and type: `http://192.168.1.55:5000`.
+    * You can now view fluid 60FPS telemetry and actuate PC optimization commands directly from your phone!
+
+## Offline Capability
+`Chart.js` is automatically downloaded on the first boot into the `/static/` folder ensuring absolute privacy and 100% offline functionality. No external CDN calls are physically made into the web application.

@@ -1,9 +1,9 @@
 import webview
 import threading
-from app import app, start_monitoring
+from app import app, run_asyncio_loop
 
 def start_server():
-    app.run(host='127.0.0.1', port=5000, threaded=True)
+    app.run(host='0.0.0.0', port=5000, threaded=True, use_reloader=False)
 
 if __name__ == '__main__':
     # Start the backend Flask server in a daemon thread
@@ -11,7 +11,7 @@ if __name__ == '__main__':
     server_thread.start()
 
     # Start the OpenClaw / psutil OS anomaly monitoring thread
-    monitor_thread = threading.Thread(target=start_monitoring, daemon=True)
+    monitor_thread = threading.Thread(target=run_asyncio_loop, daemon=True)
     monitor_thread.start()
 
     # Create the native Desktop Window

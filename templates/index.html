@@ -3,159 +3,142 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenClaw Sentinel - Windows Edition</title>
+    <title>Gold-Standard OpenClaw Sentinel</title>
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Segoe+UI:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Mono:wght@400;500;700&family=Orbitron:wght@500;700;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <!-- Completely Offline: Removed Chart.js dependency to stop horizontal expansion breakages -->
+    <!-- Natively Hosted Chart.js ensures 60FPS offline support -->
+    <script src="{{ url_for('static', filename='chart.js') }}"></script>
+    <!-- PWA Setup -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#07090f">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='icons/icon.png') }}">
 </head>
 <body>
-    <div class="app-container">
+    <div class="glass-bg"></div>
+    <div class="cyber-container">
         
-        <!-- Windows 11 Task Manager Style Sidebar -->
-        <nav class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <svg class="hamburger" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+        <!-- Cyber-Dark Top Bar -->
+        <header class="cyber-header">
+            <div class="brand">
+                <span class="neon-text">CLAW<span style="color:#fff;">SENTINEL</span></span>
+                <span class="version-tag">/// v2.1.0-RC OS KERNEL</span>
             </div>
+            <div class="mobile-ip-info">
+                <span>LAN Connect: http://YOUR_PC_IP:5000</span>
+            </div>
+            <button class="nav-toggle" id="navToggle">≡</button>
+        </header>
+
+        <!-- Sidebar Navigation -->
+        <nav class="cyber-nav" id="sidebar">
             <ul class="nav-links">
-                <li class="nav-item active" data-tab="tab-processes" title="Processes">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
-                    <span class="nav-label">Processes</span>
-                </li>
-                <li class="nav-item" data-tab="tab-performance" title="Performance">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                    <span class="nav-label">Performance</span>
-                </li>
-                <li class="nav-item" data-tab="tab-av" title="Virus & threat protection">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                    <span class="nav-label">Threat Scan</span>
-                </li>
-                <li class="nav-item" data-tab="tab-tuneup" title="System Tune-Up">
-                    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
-                    <span class="nav-label">System Tune-Up</span>
-                </li>
+                <li class="nav-item active" data-tab="tab-hardware">🛡️ Hardware Matrix</li>
+                <li class="nav-item" data-tab="tab-optimizer">⚡ Smart Optimizer</li>
+                <li class="nav-item" data-tab="tab-audit">🔒 Security Audit</li>
             </ul>
+            <div class="nav-footer">
+                <div class="conn-status"><span class="pulse"></span> 0.0.0.0 Active</div>
+            </div>
         </nav>
 
-        <!-- Main Content Viewport -->
-        <main class="main-content">
-            
-            <header class="top-header">
-                <h1 id="page-title">Processes</h1>
-                <div class="status-indicator">
-                    <span class="pulse-dot" id="connection-status"></span>
-                    <span id="health-badge">Optimal</span>
-                </div>
-            </header>
+        <!-- Main Content Frames -->
+        <main class="cyber-main">
 
-            <!-- TAB 1: PROCESSES & LOGS (Default) -->
-            <div id="tab-processes" class="tab-pane active-tab">
-                <div class="action-bar">
-                    <button id="kill-all-btn" class="sys-btn danger">End Rogue Tasks</button>
-                    <div style="flex:1"></div>
-                    <span style="color:var(--text-secondary); font-size: 0.9rem;">Total Active: <b id="active-procs" style="color:var(--text-primary);">0</b></span>
-                </div>
-                
-                <div class="card full-height log-card">
-                    <div class="grid-header">
-                        <div class="col-name">Name</div>
-                        <div class="col-status">Status</div>
-                        <div class="col-pid">Evaluation</div>
-                    </div>
-                    <div class="logs-container" id="logs-list">
-                        <div class="log-entry">Loading OpenClaw AI Evaluations...</div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- TAB 2: PERFORMANCE (Graphs) -->
-            <div id="tab-performance" class="tab-pane">
-                <!-- 
-                    The graph horizontal expansion bug occurred because 
-                    Chart.js forces the canvas width to explode if its wrapper 
-                    does not strictly constrain it via flex/overflow. I've engineered 
-                    a strictly-bound native canvas instead!
-                -->
-                <div class="performance-grid">
-                    <div class="perf-sidebar">
-                        <div class="perf-item active">
-                            <div class="perf-name">CPU</div>
-                            <div class="perf-val" id="cpu-side-val">0%</div>
-                            <div class="perf-graph-mini" id="cpu-mini-graph"></div>
-                        </div>
-                        <div class="perf-item">
-                            <div class="perf-name">Memory</div>
-                            <div class="perf-val" id="mem-side-val">0%</div>
-                            <div class="perf-graph-mini" id="mem-mini-graph"></div>
-                        </div>
-                        <div class="perf-item">
-                            <div class="perf-name">Network</div>
-                            <div class="perf-val" id="net-side-val">0 Conn</div>
-                            <div class="perf-graph-mini" id="net-mini-graph"></div>
-                        </div>
-                    </div>
+            <!-- TAB 1: Hardware Metrics (60FPS Chart.js) -->
+            <div id="tab-hardware" class="tab-pane active-tab">
+                <div class="chart-grid">
                     
-                    <div class="perf-main">
-                        <h2>CPU Utilization</h2>
-                        <div class="graph-wrapper">
-                            <canvas id="customGraphCanvas"></canvas>
+                    <!-- CPU Node -->
+                    <div class="sys-node glass-panel glow-border">
+                        <div class="node-header">
+                            <div><span class="node-title">CPU.CORE</span> <span id="cpu-temp" class="node-temp">N/A</span></div>
+                            <span class="node-val" id="cpu-val">0%</span>
                         </div>
-                        <div class="perf-stats">
-                            <div>
-                                <div class="stat-label">Utilization</div>
-                                <div class="stat-val" id="cpu-main-val">0%</div>
-                            </div>
-                            <div>
-                                <div class="stat-label">System Health Matrix</div>
-                                <div class="stat-val" id="health-score-val">100%</div>
-                            </div>
-                            <div>
-                                <div class="stat-label">Active Sockets</div>
-                                <div class="stat-val" id="net-main-val">0</div>
-                            </div>
-                        </div>
+                        <div class="chart-wrapper"><canvas id="cpuChart"></canvas></div>
                     </div>
+
+                    <!-- RAM Node -->
+                    <div class="sys-node glass-panel glow-border">
+                        <div class="node-header">
+                            <div><span class="node-title">MEM.ALLOC</span> <span class="node-sub">Total: <span id="ram-total"></span>GB</span></div>
+                            <span class="node-val" id="ram-val">0%</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top:-5px;">Standby List: <span id="ram-standby" style="color:var(--text-glow);">Unknown</span></div>
+                        <div class="chart-wrapper"><canvas id="ramChart"></canvas></div>
+                    </div>
+
+                    <!-- GPU Node -->
+                    <div class="sys-node glass-panel glow-border">
+                        <div class="node-header">
+                            <div><span class="node-title">GPU.STREAM</span> <span id="gpu-temp" class="node-temp">N/A</span></div>
+                            <span class="node-val" id="gpu-val">0%</span>
+                        </div>
+                        <div style="font-size: 0.75rem; color: var(--text-muted); margin-top:-5px;" id="gpu-model">NVIDIA GPU Polling...</div>
+                        <div class="chart-wrapper"><canvas id="gpuChart"></canvas></div>
+                    </div>
+
+                    <!-- DISK IO Node -->
+                    <div class="sys-node glass-panel glow-border">
+                        <div class="node-header">
+                            <div><span class="node-title">DISK.IOPS</span> <span class="node-sub">R/W Matrix</span></div>
+                            <span class="node-val" id="disk-iops">0 IO/s</span>
+                        </div>
+                        <div class="rw-stats">
+                            <div>R <span id="disk-read" style="color:#00ff88;">0</span> MB/s</div>
+                            <div>W <span id="disk-write" style="color:#ff3366;">0</span> MB/s</div>
+                        </div>
+                        <div class="chart-wrapper"><canvas id="diskChart"></canvas></div>
+                    </div>
+
+                    <!-- NETWORK Node -->
+                    <div class="sys-node glass-panel glow-border" style="grid-column: span 1;">
+                        <div class="node-header">
+                            <div><span class="node-title">NET.SOCKET</span> <span class="node-sub">Ext. Tracing</span></div>
+                            <span class="node-val" id="net-latency">0ms</span>
+                        </div>
+                        <div class="rw-stats">
+                            <div>↓ <span id="net-down" style="color:#00ff88;">0</span> MB/s</div>
+                            <div>↑ <span id="net-up" style="color:#ff3366;">0</span> MB/s</div>
+                        </div>
+                        <div class="chart-wrapper"><canvas id="netChart"></canvas></div>
+                    </div>
+
                 </div>
             </div>
 
-            <!-- TAB 3: THREAT SCAN -->
-            <div id="tab-av" class="tab-pane">
-                <div class="card scan-card">
-                    <h2>OpenClaw Anti-Malware</h2>
-                    <p style="color: var(--text-secondary); margin: 10px 0 30px;">
-                        Perform deep inspection of background tasks utilizing local AI heuristics via Gemini.
+            <!-- TAB 2: Smart Optimizer (Ctypes Hook) -->
+            <div id="tab-optimizer" class="tab-pane">
+                <div class="shield-container glass-panel glow-border text-center">
+                    <h2 style="margin-bottom: 20px; font-family: 'Orbitron'; font-size: 2rem; color: var(--text-glow);">ONE-CLICK SHIELD</h2>
+                    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto 40px; line-height: 1.6;">
+                        Engage raw `ctypes.windll` API calls to flush Windows Memory Standby caches, execute explicit `ipconfig /flushdns` socket resets, and instantly eliminate temporary payloads via backend OS mapping.
                     </p>
                     
-                    <div style="display: flex; gap: 15px;">
-                        <button class="sys-btn primary" onclick="startScan('quick')">Quick scan</button>
-                        <button class="sys-btn" onclick="startScan('full')">Full Heuristic sweep</button>
-                    </div>
+                    <button class="shield-btn" id="shield-btn">Initiate Deep Clean</button>
 
-                    <div id="scan-feedback" class="scan-feedback">
-                        <h3 id="scan-status-text">Ready to scan.</h3>
-                        <div class="scan-progress-bar-bg">
-                            <div class="scan-progress-bar" id="scan-progress"></div>
-                        </div>
-                        <p id="scan-threats-found" style="margin-top: 15px;"></p>
+                    <div id="shield-feedback" class="feedback-box">
+                        <div class="efficiency-gain" id="eff-gain">+0%</div>
+                        <div class="feedback-logs" id="fb-logs"></div>
                     </div>
                 </div>
             </div>
 
-            <!-- TAB 4: SYSTEM TUNE-UP -->
-            <div id="tab-tuneup" class="tab-pane">
-                <div class="card scan-card">
-                    <h2>Aggressive System Tune-Up</h2>
-                    <p style="color: var(--text-secondary); margin: 10px 0 30px;">
-                        Make your PC faster instantly. Delete GBs of permanently disposable %TEMP% and OS Prefetch payload data bypassing the Recycle Bin entirely.
-                    </p>
-                    
-                    <div style="display: flex; gap: 15px; margin-bottom: 25px;">
-                        <button class="sys-btn primary" id="clean-temp-btn" style="padding: 12px 24px; font-size: 1rem;">Clean Junk Files Instantly</button>
+            <!-- TAB 3: Security Audit -->
+            <div id="tab-audit" class="tab-pane">
+                <div class="audit-grid">
+                    <div class="audit-card glass-panel glow-border">
+                        <h3>Firewall Integrity</h3>
+                        <p class="audit-val" id="aud-fw">Scanning...</p>
                     </div>
-
-                    <div id="tuneup-feedback" class="scan-feedback" style="display: none; background: rgba(16, 185, 129, 0.1); border: 1px solid var(--health-good);">
-                        <h3 id="tuneup-status-text" style="color: var(--health-good);">Optimization Engine Engaged.</h3>
-                        <p id="tuneup-saved-text" style="margin-top: 10px; font-size: 1.1rem;"></p>
+                    <div class="audit-card glass-panel glow-border">
+                        <h3>Vulnerable Open Sockets</h3>
+                        <p class="audit-val" id="aud-ports" style="font-size:3rem; color: #ff3366;">0</p>
+                        <p style="color:var(--text-muted); font-size: 0.8rem;">LISTENING State Detected</p>
+                    </div>
+                    <div class="audit-card glass-panel glow-border">
+                        <h3>OS Update Status</h3>
+                        <p class="audit-val" id="aud-reboot">Scanning...</p>
                     </div>
                 </div>
             </div>
@@ -163,9 +146,14 @@
         </main>
     </div>
 
-    <!-- Notification Toast Container -->
-    <div id="toast-container" class="toast-container"></div>
-
+    <!-- Mobile-Responsive Javascript Controller -->
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    <script>
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/static/service-worker.js');
+        });
+      }
+    </script>
 </body>
 </html>
