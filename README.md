@@ -7,6 +7,15 @@
 
 Aegis is a production-ready, unified cybersecurity SaaS platform designed for automated threat scanning, intelligent remediation, and enterprise-grade security management.
 
+## 💡 What is Aegis?
+Aegis is an end-to-end Vulnerability Management and Remediation platform. Unlike traditional scanners that only report issues, Aegis provides a closed-loop system to **find, verify, and fix** security threats in real-time.
+
+### The Aegis Workflow:
+1.  **Automated Discovery**: Our scanning engine performs deep-interrogation of targets to identify vulnerabilities (SQLi, XSS, RCE, SSRF, etc.).
+2.  **Agentic AI Remediation**: For every found threat, an intelligent security agent analyzes the context and generates production-ready remediation code or configuration patches.
+3.  **One-Click Fix**: Authorized users can apply these AI-generated fixes directly from the dashboard, significantly reducing the Mean Time to Repair (MTTR).
+4.  **Human SOC Escalation**: For high-risk or complex scenarios, Aegis provides an instant bridge to a Human Security Operations Center (SOC) for manual intervention and expert guidance.
+
 ## 🌟 Key Features
 
 ### 🔐 Security & Orchestration
