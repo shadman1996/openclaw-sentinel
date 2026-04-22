@@ -30,6 +30,35 @@ Aegis is an end-to-end Vulnerability Management and Remediation platform. Unlike
 - **Credit Economy**: Built-in ledger system for tracking consumption and manual refunds.
 - **Auth & Identity**: JWT-based security with OTP-powered password recovery.
 
+## ⚙️ Technical Implementation Details
+
+### 🏗 Backend Architecture (FastAPI)
+The backend is organized into modular routers and specialized services:
+
+#### **Core Routers**
+- **`auth.py`**: Handles JWT session management, registration (auto-admin for first user), profile updates, and a multi-stage OTP password reset flow.
+- **`billing.py`**: Manages the credit-based economy. Supports Stripe Checkout sessions and a "Dev-Mode" bypass that grants credits immediately.
+- **`admin.py`**: Exclusive endpoints for Super Admins to audit users, modify account tiers, and issue manual credit refunds with ledger entries.
+- **`scans.py`**: Orchestrates the vulnerability discovery lifecycle, from target validation to result persistence.
+- **`remediation.py`**: Bridges findings to the AI engine to generate and track fix implementation "jobs."
+- **`soc.py`**: Manages escalation tickets, bridging automated results to human-readable requests.
+
+#### **Engine Services**
+- **`scanner.py`**: A high-concurrency simulation engine that mimics real-world network probes (SQLi, XSS, etc.) and calculates risk scores.
+- **`ai_engine.py`**: Generates intelligent remediation plans based on vulnerability context using agentic logic.
+- **`simulator.py`**: Provides mocked telemetry and scan behavior for development without requiring live target infrastructure.
+
+### 💻 Frontend Architecture (Next.js)
+The frontend uses a unified design system with shared logic for the dual-dashboard experience:
+
+- **Auth Providers**: Centralized context for JWT session persistence and permission gating.
+- **API Client**: A unified `api.ts` wrapper with error handling and request/response interceptors for the entire SaaS suite.
+- **Super Admin Console**: A highly reactive management panel with:
+  - User search/filtering logic.
+  - Transaction Ledger modals with real-time data fetching.
+  - Platform-wide statistics visualization via Recharts.
+- **Client Settings**: Secure self-service profile and password management components.
+
 ## 🛠 Tech Stack
 
 - **Backend**: FastAPI, SQLAlchemy, SQLite, Pydantic.
