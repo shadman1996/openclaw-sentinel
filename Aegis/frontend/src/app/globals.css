@@ -1,0 +1,55 @@
+@import "tailwindcss";
+
+:root {
+  --aegis-cyan: #00e5ff;
+  --aegis-purple: #7c3aed;
+  --aegis-green: #22c55e;
+  --aegis-red: #ef4444;
+  --aegis-amber: #f59e0b;
+  --bg-primary: #0a0a0f;
+  --bg-card: #111118;
+  --bg-card-hover: #191922;
+  --border: #1e1e2e;
+}
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg-primary); }
+::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #555; }
+
+/* Glow effects */
+.glow-cyan { box-shadow: 0 0 20px rgba(0, 229, 255, 0.15), 0 0 40px rgba(0, 229, 255, 0.05); }
+.glow-purple { box-shadow: 0 0 20px rgba(124, 58, 237, 0.15), 0 0 40px rgba(124, 58, 237, 0.05); }
+.glow-green { box-shadow: 0 0 20px rgba(34, 197, 94, 0.15); }
+.glow-red { box-shadow: 0 0 20px rgba(239, 68, 68, 0.15); }
+
+/* Pulse animation for scanning */
+@keyframes scan-pulse {
+  0%, 100% { opacity: 0.4; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+.animate-scan-pulse { animation: scan-pulse 2s ease-in-out infinite; }
+
+/* Gradient text */
+.gradient-text {
+  background: linear-gradient(135deg, var(--aegis-cyan), var(--aegis-purple));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Severity colors */
+.severity-critical { color: #ef4444; }
+.severity-high { color: #f97316; }
+.severity-medium { color: #f59e0b; }
+.severity-low { color: #22c55e; }
+.severity-info { color: #6b7280; }
+
+.badge-critical { background: rgba(239,68,68,0.15); color: #ef4444; border: 1px solid rgba(239,68,68,0.3); }
+.badge-high { background: rgba(249,115,22,0.15); color: #f97316; border: 1px solid rgba(249,115,22,0.3); }
+.badge-medium { background: rgba(245,158,11,0.15); color: #f59e0b; border: 1px solid rgba(245,158,11,0.3); }
+.badge-low { background: rgba(34,197,94,0.15); color: #22c55e; border: 1px solid rgba(34,197,94,0.3); }

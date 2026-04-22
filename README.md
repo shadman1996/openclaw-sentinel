@@ -1,42 +1,54 @@
-# OpenClaw Sentinel - Gold Standard Architecture
+# Aegis Security Platform — Advanced SaaS
 
-<div align="center">
-  <img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white"/>
-  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black"/>
-  <img src="https://img.shields.io/badge/GitHub-100000?style=for-the-badge&logo=github&logoColor=white"/>
-  <img src="https://img.shields.io/badge/Windows_OS-0078D6?style=for-the-badge&logo=windows&logoColor=white"/>
-</div>
+Aegis is a production-ready, unified cybersecurity platform designed for automated threat scanning, remediation, and enterprise-grade security management. It bridges the gap between automated tools and human expertise with a seamless credit-based economy.
 
-## Overview
-OpenClaw Sentinel has evolved into a Tier-1 Cybersecurity and Optimization Hub. By leveraging deep OS-level `ctypes.windll` payloads, Sentinel operates natively on your underlying memory lists. The entire UI has been redesigned as an asynchronous "Cyber-Dark" Mobile-first Web Application.
+## 🚀 Key Modules & Architecture
 
-### Phase Features:
-* **The Smart Optimizer:** One-Click execution flushing global DNS caches, Socket Winsocks, %TEMP% payloads, and the active Windows Memory Standby Lists (`EmptyWorkingSet` mapped hooks).
-* **60FPS Hardware Telemetry:** Blistering 500ms `asyncio` loops reading direct WMI/ctypes streams for CPU/GPU/RAM/Network analytics graphed on 5 simultaneous `Chart.js` engines.
-* **Security Auditor:** Active interrogation of your firewall state and Open Listening network sockets.
+### 1. Dual-Panel Management
+- **Client Admin Dashboard**: A high-end, glassmorphic interface for clients to manage their own scans, view security telemetry, purchase credits via Stripe, and escalate critical issues to a Human SOC.
+- **Super Admin Console**: A developer-centric powerhouse for platform management. Includes:
+  - Real-time user auditing and profile editing.
+  - Credit administration with manual refund capabilities.
+  - Platform-wide SLA and pricing configuration.
+  - Advanced transaction ledgers for financial transparency.
 
-### Additional Updates (v2.1):
-* **Advanced OS Optimization Tier:** 10+ new deep-system capabilities including Hardware-Accelerated GPU Scheduling (HAGS), Ultimate Performance Power Plan generation, UI Visual Effects minimizing, and Registry/Browser cache cleaning protocols.
-* **Hardware & Tooling Hooks:** Direct API detection and launching of AMD Ryzen Master or Intel XTU based on physical CPU architectures, plus native Microsoft PC Manager integration.
-* **Startup App Manager:** Deep scans of both HKCU and HKLM registry hives, allowing you to view and dynamically disable background applications attempting to boot with Windows directly from the web interface.
-* **Task Manager UI Engine:** Complete visual overhaul featuring mobile-responsive gradient data grids. Tracks dynamic per-core CPU loads, exact zero'd memory standby lists, aggregate disk I/O metrics, and real-time socket latency graphs.
+### 2. Autonomous Security Engine
+- **Vulnerability Scanner**: High-performance domain and IP scanning with real-time feedback.
+- **AI Remediation**: Automated "AI Fix" generation and application using intelligent agentic workflows.
+- **SOC Escalation**: One-click bridging to human analysts for high-risk vulnerabilities that AI cannot safely resolve.
 
-## Standard Operating Procedure (Mobile Access)
-This architecture is specifically engineered to act as a **Remote Sentinel** viewable natively from your iOS or Android device while running on your physical PC.
+### 3. Modern SaaS Features
+- **Credit-Based Economy**: Integrated ledger system tracking every credit consumed (scans/fixes) or refunded by admins.
+- **Secure Authentication**: JWT-based authentication with OTP-powered password recovery and user profile self-management.
+- **Premium Aesthetics**: Built with Next.js and Vanilla CSS for a blistering fast, "Cyber-Dark" premium experience.
 
-1. **Host Configuration (On your PC)**
-    * Open your Windows Terminal as **Administrator**. *(Critical for `ctypes` Memory mapping).*
-    * Initialize the background server:
-      ```cmd
-      python app.py
-      ```
-    * Your command line will explicitly output: `Running on http://0.0.0.0:5000`.
+## 🛠 Tech Stack
+- **Frontend**: Next.js 14, Lucide Icons, Recharts (Visualizations).
+- **Backend**: FastAPI (Python), SQLAlchemy (ORM).
+- **Database**: SQLite (Production-ready local storage with UUID identifiers).
+- **Payments**: Stripe Integration (with Dev-Mode bypass for local testing).
 
-2. **Mobile Interfacing (On your iPhone/Android)**
-    * Ensure your phone is connected to the exact same Wi-Fi LAN router as your PC.
-    * Open your Settings/Terminal on your PC to find your local IPv4 address (e.g. `192.168.1.55`).
-    * Open Safari or Chrome on your phone and type: `http://192.168.1.55:5000`.
-    * You can now view fluid 60FPS telemetry and actuate PC optimization commands directly from your phone!
+## 🚦 Getting Started
 
-## Offline Capability
-`Chart.js` is automatically downloaded on the first boot into the `/static/` folder ensuring absolute privacy and 100% offline functionality. No external CDN calls are physically made into the web application.
+### 1. Backend Setup
+- Navigate to `Aegis/backend`.
+- Install dependencies: `pip install -r requirements.txt`.
+- Run the API: `python main.py`.
+- The API will be available at `http://localhost:8000`.
+- **Note**: The first user registered will be granted Admin privileges by default (controlled in `routers/auth.py`).
+
+### 2. Frontend Setup
+- Navigate to `marketing-site`.
+- Install dependencies: `npm install`.
+- Start the development server: `npm run dev`.
+- The dashboard will be available at `http://localhost:3000`.
+
+## 🛡 Security Policy
+Super Admin access is strictly enforced via the `require_admin` dependency. Sensitive operations like credit refunds and plan overrides require an active Admin session token.
+
+## 📈 Roadmap
+- [x] Super Admin User Management & Refunds
+- [x] Client Profile & Password Reset (OTP)
+- [x] Integrated Transaction Ledgers
+- [ ] Automated HTML-to-PDF Scan Reports
+- [ ] Multi-region Network Scanning Nodes

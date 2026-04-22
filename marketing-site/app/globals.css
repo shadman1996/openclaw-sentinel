@@ -1,0 +1,218 @@
+@import "tailwindcss";
+
+/* ─── Custom Design Tokens ─────────────────────────────────────── */
+:root {
+  --aegis-bg:        #050A14;
+  --aegis-surface:   #0B1120;
+  --aegis-border:    rgba(0, 216, 255, 0.15);
+  --aegis-cyan:      #00D8FF;
+  --aegis-cyan-dim:  #00A8C8;
+  --aegis-violet:    #8B5CF6;
+  --aegis-violet-dim:#6D3FD8;
+  --aegis-green:     #10B981;
+  --aegis-red:       #EF4444;
+  --aegis-text:      #E2E8F0;
+  --aegis-muted:     #64748B;
+  --font-body:       'Inter', sans-serif;
+  --font-heading:    'Space Grotesk', sans-serif;
+}
+
+/* ─── Base Reset ───────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background-color: var(--aegis-bg);
+  color: var(--aegis-text);
+  font-family: var(--font-body);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* ─── Glassmorphism Utility ────────────────────────────────────── */
+.glass {
+  background: rgba(11, 17, 32, 0.6);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--aegis-border);
+}
+
+.glass-strong {
+  background: rgba(11, 17, 32, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(0, 216, 255, 0.2);
+}
+
+/* ─── Neon Glow Effects ────────────────────────────────────────── */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 216, 255, 0.3), 0 0 60px rgba(0, 216, 255, 0.1);
+}
+
+.glow-violet {
+  box-shadow: 0 0 20px rgba(139, 92, 246, 0.3), 0 0 60px rgba(139, 92, 246, 0.1);
+}
+
+.text-glow-cyan {
+  text-shadow: 0 0 20px rgba(0, 216, 255, 0.5);
+}
+
+/* ─── Animated Gradient Hero Background ───────────────────────── */
+.hero-bg {
+  background:
+    radial-gradient(ellipse 80% 60% at 50% -10%, rgba(0, 216, 255, 0.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 80% 50%, rgba(139, 92, 246, 0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 20% 70%, rgba(0, 216, 255, 0.06) 0%, transparent 60%),
+    var(--aegis-bg);
+}
+
+/* ─── Mesh Grid Overlay ────────────────────────────────────────── */
+.mesh-grid {
+  background-image:
+    linear-gradient(rgba(0, 216, 255, 0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 216, 255, 0.04) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ─── Gradient Text ────────────────────────────────────────────── */
+.gradient-text-cyan {
+  background: linear-gradient(135deg, #00D8FF 0%, #8B5CF6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-violet {
+  background: linear-gradient(135deg, #8B5CF6 0%, #00D8FF 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Animated Border ──────────────────────────────────────────── */
+.border-animate {
+  position: relative;
+  border: 1px solid transparent;
+  background-clip: padding-box;
+}
+
+.border-animate::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(0, 216, 255, 0.4), rgba(139, 92, 246, 0.4));
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.border-animate:hover::before { opacity: 1; }
+
+/* ─── Scrollbar ────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--aegis-bg); }
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 216, 255, 0.3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--aegis-cyan); }
+
+/* ─── Keyframe Animations ──────────────────────────────────────── */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50%       { transform: translateY(-12px); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { opacity: 0.6; }
+  50%       { opacity: 1; }
+}
+
+@keyframes scan-line {
+  0%   { transform: translateY(-100%); opacity: 0; }
+  10%  { opacity: 1; }
+  90%  { opacity: 1; }
+  100% { transform: translateY(400%); opacity: 0; }
+}
+
+@keyframes shimmer {
+  0%   { background-position: -200% center; }
+  100% { background-position:  200% center; }
+}
+
+.animate-float    { animation: float 6s ease-in-out infinite; }
+.animate-pulse-glow { animation: pulse-glow 2s ease-in-out infinite; }
+.animate-scan-line  { animation: scan-line 3s linear infinite; }
+
+/* ─── CTA Button ───────────────────────────────────────────────── */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 32px;
+  background: linear-gradient(135deg, #00D8FF, #8B5CF6);
+  color: #050A14;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(255,255,255,0.2), transparent);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 30px rgba(0, 216, 255, 0.4), 0 4px 15px rgba(139, 92, 246, 0.3);
+}
+
+.btn-primary:hover::before { opacity: 1; }
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 13px 32px;
+  background: transparent;
+  color: var(--aegis-cyan);
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 216, 255, 0.3);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-secondary:hover {
+  background: rgba(0, 216, 255, 0.08);
+  border-color: var(--aegis-cyan);
+  transform: translateY(-2px);
+}
+
+/* ─── Section Spacing ──────────────────────────────────────────── */
+.section-pad {
+  padding: 100px 24px;
+}
+
+@media (max-width: 768px) {
+  .section-pad { padding: 64px 20px; }
+}
